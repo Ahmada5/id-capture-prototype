@@ -11,13 +11,17 @@
 				:style="{ width: cropWidth + 'px', height: cropHeight + 'px', left: cropX + 'px', top: cropY + 'px' }">
 			</div>
 		</div>
-		<div class="">
+		<div>
 			<div style="background-color: azure;">
 				<canvas class="marginarea" ref="canvas"></canvas>
 			</div>
 			<button id="startbutton" @click="takePicture">Take Picture</button>
 			<button class="mr-2 ml-2" id="startbutton" @click="clearPicture">Clear Picture</button>
 			<button id="startbutton" @click="sendPicture">Send Picture</button>
+		</div>
+		<div class=" mt-5 justify-center flex-column bg-purple-darken-2">
+			<button id="startbutton" @click="getData" class="mt-10 font-weight-bold">Get Data</button>
+			<p v-for="(data, index) in responseData" :key="index">{{ data }}</p>
 		</div>
 	</div>
 </template>
@@ -64,13 +68,13 @@ export default {
 			finalName: "",
 			finalData: "",
 			globalDate: "",
-			dataGet: []
+			dataGet: [],
+			responseData: ''
 
 		};
 	},
 	mounted() {
 		this.startup();
-		this.getdata();
 		this.getGlobalComp();
 	},
 
@@ -152,15 +156,14 @@ export default {
 				}
 			}
 		},
-		getdata() {
-			try {
-				const response = axios.get('http://localhost:3000/files');
-				const dataGet = response.data;
-				console.log(dataGet);
-			} catch (error) {
-				console.error('Error fetching data', error);
-			}
-		},
+		async getData() {
+            try {
+                const response = await axios.get('http://localhost:3000/files');
+                this.responseData = response.data;
+            } catch (error) {
+                console.error('Error fetching data', error);
+            }
+        },
 		async sendPicture() {
 			if (this.photoUrl) {
 				const formData = new FormData();
